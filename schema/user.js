@@ -1,27 +1,31 @@
-import { gql } from 'apollo-server-express';
-
+import { gql } from "apollo-server-express";
 export default gql`
-	extend type Query {
-		getUsers: [User!]
-		getUserById(id: ID!): User
-		me: User
-	}
 	extend type Mutation {
 		signUp(
-			username: String!
+			name: String!
 			email: String!
 			phone: String!
-			password: String!
-		): Token!
-		signIn(login: String!, password: String!): Token!
+			address: String
+			zipcode: String
+			profilephoto: Upload
+			documents: Upload
+		): User!
 	}
-	type Token {
-		token: String!
-	}
+
 	type User {
 		id: ID!
-		username: String!
+		name: String!
 		email: String!
 		phone: String!
+		address: String
+		zipcode: String
+		profilephoto: File
+		documents: File
+	}
+
+	type File {
+		filename: String!
+		mimetype: String!
+		encoding: String!
 	}
 `;

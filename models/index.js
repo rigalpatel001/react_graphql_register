@@ -1,27 +1,26 @@
-import mongoose from 'mongoose';
+import Sequelize from "sequelize";
 
-import User from './user';
-
-const connectDb = () => {
-	// if (process.env.TEST_DATABASE_URL) {
-	// 	console.log(process.env.TEST_DATABASE_URL);
-	// 	return mongoose.connect(process.env.TEST_DATABASE_URL, {
-	// 		useNewUrlParser: true,
-	// 	});
-	// }
-
-	if (process.env.DATABASE_URL) {
-		console.log(process.env.DATABASE_URL);
-		return mongoose.connect(process.env.DATABASE_URL, {
-			useNewUrlParser: true,
-		});
+const sequelize = new Sequelize(
+	process.env.DATABASE,
+	process.env.DATABASE_USER,
+	process.env.DATABASE_PASSWORD,
+	{
+		dialect: "postgres",
+		define: {
+			timestamps: false
+		}
 	}
-};
+);
 
 const models = {
-	User
+	User: sequelize.import("./user")
 };
-
-export { connectDb };
+Object.keys(models).forEach(key => {
+	if ("associate" in models[key]) {
+		models[key].associate(models);
+	}
+});
 
 export default models;
+
+export { sequelize };

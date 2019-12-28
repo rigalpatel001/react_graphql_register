@@ -1,75 +1,33 @@
-import jwt from 'jsonwebtoken';
-import { combineResolvers } from 'graphql-resolvers';
-import { AuthenticationError, UserInputError } from 'apollo-server';
-
-
-const createToken = async (user, secret, expiresIn) => {
-	const { id, email, username, phone, role } = user;
-	return await jwt.sign(
-		{
-			id,
-			email,
-			username
-		},
-		secret,
-		{
-			expiresIn,
-		}
-	);
-};
+import { AuthenticationError, UserInputError } from "apollo-server";
 
 export default {
-	Query: {
-		getUsers: async (parent, args, { models }) => {
-			return await models.User.find();
-		},
-		getUserById: async (parent, { id }, { models }) => {
-			return await models.User.findById(id);
-		},
-		me: async (parent, args, { models, me }) => {
-			if (!me) {
-				return null;
-			}
-
-			return await models.User.findById(me.id);
-		},
-	},
-
 	Mutation: {
 		signUp: async (
 			parent,
-			{ username, email, password, phone },
+			{ name, email, phone, address, zipcode, profilephoto, documents },
+
 			{ models, secret }
 		) => {
-			const user = await models.User.create({
-				username,
-				email,
-				password,
-				phone
+			profilephoto.then(file => {
+				const { createReadStream, filename, mimetype } = file;
+				const fileStream = createReadStream();
+				fileStream.pipe(fs.createWriteStream(`./uploadedFiles/${filename}`));
+				//return file;
 			});
 
-			return {
-				token: createToken(user, secret, '30m'),
-			};
-		},
+			// const profilephoto1 = "111";
+			// const documents1 = "100";
 
-		signIn: async (parent, { login, password }, { models, secret }) => {
-			const user = await models.User.findByLogin(login);
-
-			if (!user) {
-				throw new UserInputError('No user found with this login credentials.');
-			}
-
-			const isValid = await user.validatePassword(password);
-
-			if (!isValid) {
-				throw new AuthenticationError('Invalid password.');
-			}
-
-			return {
-				token: createToken(user, secret, '30m'),
-			};
-		},
-		
-	},
+			const user = await models.User.create({
+				name,
+				email,
+				phone,
+				address,
+				zipcode,
+				profilephoto,
+				documents
+			});
+			return user;
+		}
+	}
 };

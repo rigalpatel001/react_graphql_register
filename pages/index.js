@@ -1,10 +1,9 @@
 import App from "../components/App";
-import Header from "../components/Header";
-import Loginform from "../components/Loginform";
+
+import Register from "../components/Register";
 
 export default () => (
 	<App>
-		<Header />
-		<Loginform />
+		<Register />
 	</App>
 );
