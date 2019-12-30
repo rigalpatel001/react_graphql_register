@@ -12,13 +12,12 @@ import Link from "@material-ui/core/Link";
 import { withStyles } from "@material-ui/core/styles";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import swal from 'sweetalert';
 
 const SIGNUP = gql`
   mutation signUp(
     $name: String!
     $email: String!
-    $phone: String!
+    $phone_no: String!
     $zipcode: String!
     $address: String!
     $profilephoto: Upload
@@ -27,14 +26,13 @@ const SIGNUP = gql`
     signUp(
       name: $name
       email: $email
-      phone: $phone
+      phone_no: $phone_no
       zipcode: $zipcode
       address: $address
       profilephoto: $profilephoto
       documents: $documents
     ) {
-      name
-      email
+      token
     }
   }
 `;
@@ -82,7 +80,7 @@ const styles = theme => ({
 
 //const phoneRegExp = /\(([0-9]{3})\)?([ ]?)([0-9]{3})\2([0-9]{4})/;
 const phoneRegExp = /\(([0-9]{3})\)([ ]?)([0-9]{3})([-])([0-9]{4})/;
-class Register extends React.Component {
+class Signupform extends React.Component {
   state = {
     profilephoto: [],
     documents: []
@@ -100,7 +98,6 @@ class Register extends React.Component {
     let prof_photo = this.state.profilephoto;
     let doc_img = this.state.documents;
 
-   
     return (
       <div className={classes.root}>
         <main className={classes.content}>
@@ -118,7 +115,7 @@ class Register extends React.Component {
                   initialValues={{
                     name: "",
                     email: "",
-                    phone: "",
+                    phone_no: "",
                     zipcode: "",
                     address: "",
                     profilephoto: null,
@@ -129,7 +126,7 @@ class Register extends React.Component {
                     email: Yup.string()
                       .email("Email is Invalid!")
                       .required("Email is Required!"),
-                    phone: Yup.string()
+                    phone_no: Yup.string()
                       .required("Phone No is Required!")
                       .length(
                         14,
@@ -153,18 +150,13 @@ class Register extends React.Component {
                       variables: {
                         name: values.name,
                         email: values.email,
-                        phone: values.phone,
+                        phone_no: values.phone_no,
                         zipcode: values.zipcode,
                         address: values.address,
                         profilephoto: values.profilephoto,
                         documents: values.documents
                       }
                     });
-                      // resetForm({});
-                      // swal({
-                      //   icon: "success",
-                      // });
-                   
                   }}
                   render={({
                     values: { name, email },
@@ -219,15 +211,15 @@ class Register extends React.Component {
                         <Grid item xs={12} sm={6}>
                           <TextField
                             variant="outlined"
-                            name="phone"
-                            autoComplete="phone"
-                            id="phone"
+                            name="phone_no"
+                            autoComplete="phone_no"
+                            id="phone_no"
                             label="Phone No"
                             placeholder="Phone No"
                             onChange={handleChange}
                             onBlur={handleBlur}
-                            helperText={touched.phone ? errors.phone : ""}
-                            error={touched.phone && Boolean(errors.phone)}
+                            helperText={touched.phone_no ? errors.phone_no : ""}
+                            error={touched.phone_no && Boolean(errors.phone_no)}
                             //margin="normal"
                             fullWidth
                           />
@@ -366,4 +358,4 @@ class Register extends React.Component {
   }
 }
 
-export default withStyles(styles, { withTheme: true })(Register);
+export default withStyles(styles, { withTheme: true })(Signupform);
